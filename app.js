@@ -67,9 +67,12 @@ app.get('/list', function(req, res) {
 
                 var tracks = [];
                 results.forEach(function(item) {
-                     tracks.push(item.track.name);
+                    var artist = item.track.artists[0].name;
+                    var track  = item.track.name;
+                    tracks.push(artist + ' - ' + track);
                 });
-                return res.send(tracks.join());
+
+                return res.send(tracks.join("\n"));
             }, function(err) {
               return res.send(err.message);
             });
