@@ -50,6 +50,29 @@ app.use('/store', function(req, res, next) {
   next();
 });
 
+app.get('/list', function(req, res) {
+  spotifyApi.refreshAccessToken()
+      .then(function(data) {
+        spotifyApi.setAccessToken(data.body['access_token']);
+        if (data.body['refresh_token']) {
+          spotifyApi.setRefreshToken(data.body['refresh_token']);
+        }
+
+        spotifyApi.getPlaylist(process.env.SPOTIFY_USERNAME, process.env.SPOTIFY_PLAYLIST_ID)
+            .then(function(data) {
+                var results = data.body.tracks.items;
+                if (results.length === 0) {
+                    return res.send('Playlist is empty.');
+                }
+                return res.send('Playlist is not empty');
+            }, function(err) {
+              return res.send(err.message);
+            });
+      }, function(err) {
+        return res.send('Could not refresh access token. You probably need to re-authorise yourself from your app\'s homepage.');
+      });
+});
+
 app.post('/store', function(req, res) {
   spotifyApi.refreshAccessToken()
     .then(function(data) {
