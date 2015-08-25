@@ -64,7 +64,12 @@ app.get('/list', function(req, res) {
                 if (results.length === 0) {
                     return res.send('Playlist is empty.');
                 }
-                return res.send('Playlist is not empty');
+
+                var tracks = [];
+                results.forEach(function(item) {
+                     tracks.push(item.track.name);
+                });
+                return res.send(tracks.join());
             }, function(err) {
               return res.send(err.message);
             });
